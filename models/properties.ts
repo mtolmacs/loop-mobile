@@ -74,7 +74,7 @@ export type Property = {
   bathrooms: number
   receptionRooms: number
   floorArea: number
-  image: URL
+  image: string
 }
 
 export type PropertyStatus = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6

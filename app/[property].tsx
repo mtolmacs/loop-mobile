@@ -34,7 +34,9 @@ export default function PropertyDetailsPage() {
     <XStack flex={1}>
       <YStack flex={1} m="$4" alignItems="center" gap="$4">
         <YStack gap="$4" maxWidth={820}>
-          <H3>{property.propertyTypeText} on {property.address}</H3>
+          <H3>
+            {property.propertyTypeText} on {property.address}
+          </H3>
           <Gallery images={images} />
         </YStack>
       </YStack>

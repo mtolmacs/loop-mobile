@@ -6,6 +6,7 @@ import Loading from '@/Loading'
 import { Redirect, useRouter } from 'expo-router'
 import { Paragraph, View, YStack } from 'tamagui'
 import { RefreshControl } from 'react-native'
+import PropertyCard from './PropertyCard'
 
 function ListItem({ item }: Readonly<{ item: Property }>) {
   const router = useRouter()
@@ -22,7 +23,7 @@ function ListItem({ item }: Readonly<{ item: Property }>) {
 
   return (
     <View onPress={() => loadDetails(Number(item.id))} m="$4" cursor="pointer">
-      <Paragraph>{JSON.stringify(item)}</Paragraph>
+      <PropertyCard data={item} />
     </View>
   )
 }
@@ -49,6 +50,9 @@ export default function PropertyList() {
 
   return (
     <FlatList
+      contentContainerStyle={{
+        alignItems: 'center',
+      }}
       ListEmptyComponent={<EmptyList />}
       data={properties.data?.properties}
       renderItem={({ item }) => <ListItem item={item} />}

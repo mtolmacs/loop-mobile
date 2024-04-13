@@ -7,8 +7,8 @@ import type { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-nat
 import { XCircle } from '@tamagui/lucide-icons'
 
 export default function Search() {
-  const [value, setValue] = React.useState<string>('')
   const [query, setQuery] = useAtom(queryRefreshAtom)
+  const [value, setValue] = React.useState<string>(query ?? '')
 
   function search() {
     setQuery(value)
