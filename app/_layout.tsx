@@ -54,6 +54,13 @@ function RootLayoutNav() {
             <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
+              <Stack.Screen
+                name="error"
+                options={{
+                  headerShown: false,
+                  presentation: 'modal',
+                }}
+              />
             </Stack>
           </GestureProvider>
         </ThemeProvider>

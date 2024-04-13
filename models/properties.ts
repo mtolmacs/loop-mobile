@@ -1,5 +1,6 @@
 import { info } from '$/logging'
-import { atomWithRefresh } from 'jotai/utils'
+import { atom } from 'jotai'
+import { RESET, atomWithRefresh, atomWithReset } from 'jotai/utils'
 
 export const listAtom = atomWithRefresh(async (get) =>
   fetch(process.env.EXPO_PUBLIC_API_ENDPOINT! + '/Properties')
@@ -9,6 +10,30 @@ export const listAtom = atomWithRefresh(async (get) =>
       return res
     })
     .then((res) => res.json())
+    .catch(() => ({
+      properties: [],
+    }))
+)
+
+const detailsAtom = atomWithReset<PropertyDetails | Error | null>(null)
+
+export const loadDetailsAtom = atom(
+  (get) => get(detailsAtom),
+  (get, set, id?: number) => {
+    if (typeof id === 'undefined') {
+      set(detailsAtom, RESET)
+    } else {
+      fetch(process.env.EXPO_PUBLIC_API_ENDPOINT! + `/Properties/${Number(id)}`)
+        .then((res) => {
+          info(`[API] Properties GET (${res.status})`)
+
+          return res
+        })
+        .then((res) => res.json())
+        .catch(() => new Error('Failed to load property details'))
+        .then((res) => set(detailsAtom, res))
+    }
+  }
 )
 
 export type Property = {
@@ -124,3 +149,56 @@ export type PropertyType =
   | 94
   | 95
   | -1
+
+type PropertyDetails = {
+  id: number
+  propertyStatus: PropertyStatus
+  propertyStatusText: string
+  propertyType: PropertyType
+  propertyTypeText: string
+  sellerGroupId: number
+  price: number
+  priceCurrency: string
+  bedrooms: 0
+  bathrooms: 0
+  receptionRooms: 0
+  areaSquareFeet: 0
+  address: string
+  geolocation: {
+    lat: number
+    lng: number
+  }
+  leaseInformation: {
+    type: number
+    typeText: string
+    leaseExpires: string
+    serviceCharge: number
+    groundRent: number
+  }
+  contractInformation: {
+    instructedOnDate: string
+    launchedDate: string
+    expiresDate: string
+  }
+  taxInformation: {
+    councilTaxBand: string
+    localAuthority: string
+  }
+  accessAndAlarm: string
+  images: [
+    {
+      id: number
+      url: string
+      mediaType: number
+      priority: number
+    },
+  ]
+  brochures: [
+    {
+      id: number
+      url: string
+      mediaType: number
+      priority: number
+    },
+  ]
+}

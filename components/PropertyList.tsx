@@ -1,18 +1,33 @@
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
-import { type Property, listAtom } from '#/properties'
+import { type Property, listAtom, loadDetailsAtom } from '#/properties'
 import { FlatList } from 'react-native-gesture-handler'
 import Loading from '@/Loading'
-import { Redirect } from 'expo-router'
-import { Paragraph } from 'tamagui'
-import Link from '@/Link'
+import { Redirect, useRouter } from 'expo-router'
+import { Paragraph, View } from 'tamagui'
 
 function ListItem({ item }: Readonly<{ item: Property }>) {
+  const router = useRouter()
+  const [details, resetDetails] = useAtom(loadDetailsAtom)
+
+  function loadDetails(id: number) {
+    // Clear cache of the last details structure (requirements)
+    if (details instanceof Error || details?.id !== id) {
+      resetDetails()
+    }
+
+    router.push({ pathname: `/${id}` })
+  }
+
   return (
-    <Link href={`/${item.id}`} m="$4">
+    <View onPress={() => loadDetails(Number(item.id))} m="$4" cursor="pointer">
       <Paragraph>{JSON.stringify(item)}</Paragraph>
-    </Link>
+    </View>
   )
+}
+
+function EmptyList() {
+  return <Paragraph>No properties available</Paragraph>
 }
 
 export default function PropertyList() {
@@ -28,8 +43,10 @@ export default function PropertyList() {
 
   return (
     <FlatList
+      ListEmptyComponent={<EmptyList />}
       data={properties.data?.properties}
       renderItem={({ item }) => <ListItem item={item} />}
+      keyExtractor={(item) => item.id.toString()}
     />
   )
 }
