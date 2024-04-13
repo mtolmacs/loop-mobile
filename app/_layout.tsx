@@ -8,6 +8,7 @@ import '../tamagui-web.css'
 import { config } from '../tamagui.config'
 import { useFonts } from 'expo-font'
 import { useEffect } from 'react'
+import GestureProvider from '@/Gesture'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -47,10 +48,12 @@ function RootLayoutNav() {
   return (
     <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
-        </Stack>
+        <GestureProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
+          </Stack>
+        </GestureProvider>
       </ThemeProvider>
     </TamaguiProvider>
   )
