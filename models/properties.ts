@@ -1,9 +1,15 @@
 import { info } from '$/logging'
 import { atom } from 'jotai'
 import { RESET, atomWithRefresh, atomWithReset } from 'jotai/utils'
+import { Platform } from 'react-native'
+
+const apiUrl =
+  Platform.OS === 'web' && process.env.NODE_ENV === 'development'
+    ? process.env.EXPO_PUBLIC_API_ENDPOINT!
+    : process.env.EXPO_PUBLIC_API_URL!
 
 export const listAtom = atomWithRefresh(async (get) =>
-  fetch(process.env.EXPO_PUBLIC_API_ENDPOINT! + '/Properties')
+  fetch(apiUrl + '/Properties')
     .then((res) => {
       info(`[API] Properties LIST (${res.status})`)
 
@@ -23,7 +29,7 @@ export const loadDetailsAtom = atom(
     if (typeof id === 'undefined') {
       set(detailsAtom, RESET)
     } else {
-      fetch(process.env.EXPO_PUBLIC_API_ENDPOINT! + `/Properties/${Number(id)}`)
+      fetch(apiUrl + `/Properties/${Number(id)}`)
         .then((res) => {
           info(`[API] Properties GET (${res.status})`)
 
