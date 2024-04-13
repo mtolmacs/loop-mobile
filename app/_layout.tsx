@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { SplashScreen, Stack } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { TamaguiProvider } from 'tamagui'
+import { Provider as JotaiProvider } from 'jotai'
 
 import '../tamagui-web.css'
 
@@ -46,15 +47,17 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme()
 
   return (
-    <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <GestureProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
-          </Stack>
-        </GestureProvider>
-      </ThemeProvider>
-    </TamaguiProvider>
+    <JotaiProvider>
+      <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <GestureProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
+            </Stack>
+          </GestureProvider>
+        </ThemeProvider>
+      </TamaguiProvider>
+    </JotaiProvider>
   )
 }

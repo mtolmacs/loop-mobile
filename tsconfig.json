@@ -3,7 +3,9 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": ["./components/*"]
+      "@/*": ["./components/*"],
+      "#/*": ["./models/*"],
+      "$/*": ["./utils/*"]
     }
   },
   "include": [

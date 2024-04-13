@@ -1,11 +1,10 @@
-import { Paragraph, YStack } from 'tamagui'
-import Link from '@/Link'
+import { YStack } from 'tamagui'
+import PropertyList from '@/PropertyList'
 
 export default function HomePage() {
   return (
-    <YStack>
-      <Paragraph>LIST</Paragraph>
-      <Link href="/5453">Go to detail</Link>
+    <YStack flex={1}>
+      <PropertyList />
     </YStack>
   )
 }
