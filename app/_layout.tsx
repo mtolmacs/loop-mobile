@@ -3,6 +3,7 @@ import { SplashScreen, Stack } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { TamaguiProvider } from 'tamagui'
 import { Provider as JotaiProvider } from 'jotai'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import '../tamagui-web.css'
 
@@ -51,17 +52,19 @@ function RootLayoutNav() {
       <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <GestureProvider>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
-              <Stack.Screen
-                name="error"
-                options={{
-                  headerShown: false,
-                  presentation: 'modal',
-                }}
-              />
-            </Stack>
+            <SafeAreaView style={{ flex: 1 }}>
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
+                <Stack.Screen
+                  name="error"
+                  options={{
+                    headerShown: false,
+                    presentation: 'modal',
+                  }}
+                />
+              </Stack>
+            </SafeAreaView>
           </GestureProvider>
         </ThemeProvider>
       </TamaguiProvider>
