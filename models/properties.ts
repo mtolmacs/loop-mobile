@@ -2,7 +2,7 @@ import { info } from '$/logging'
 import { atomWithRefresh } from 'jotai/utils'
 
 export const listAtom = atomWithRefresh(async (get) =>
-  fetch(process.env.EXPO_PUBLIC_API_URL! + '/Properties')
+  fetch(process.env.EXPO_PUBLIC_API_ENDPOINT! + '/Properties')
     .then((res) => {
       info(`[API] Properties LIST (${res.status})`)
 
