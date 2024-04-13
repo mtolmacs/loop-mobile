@@ -4,7 +4,8 @@ import { type Property, listAtom, loadDetailsAtom } from '#/properties'
 import { FlatList } from 'react-native-gesture-handler'
 import Loading from '@/Loading'
 import { Redirect, useRouter } from 'expo-router'
-import { Paragraph, View } from 'tamagui'
+import { Paragraph, View, YStack } from 'tamagui'
+import { RefreshControl } from 'react-native'
 
 function ListItem({ item }: Readonly<{ item: Property }>) {
   const router = useRouter()
@@ -27,11 +28,16 @@ function ListItem({ item }: Readonly<{ item: Property }>) {
 }
 
 function EmptyList() {
-  return <Paragraph>No properties available</Paragraph>
+  return (
+    <YStack flex={1} alignItems="center" pt="$4">
+      <Paragraph>No properties available</Paragraph>
+    </YStack>
+  )
 }
 
 export default function PropertyList() {
   const properties = useAtomValue(loadable(listAtom))
+  const reloadProperties = useSetAtom(listAtom)
 
   if (properties.state === 'loading') {
     return <Loading />
@@ -47,6 +53,13 @@ export default function PropertyList() {
       data={properties.data?.properties}
       renderItem={({ item }) => <ListItem item={item} />}
       keyExtractor={(item) => item.id.toString()}
+      refreshControl={
+        <RefreshControl
+          enabled={true}
+          refreshing={properties.state !== 'hasData'}
+          onRefresh={reloadProperties}
+        />
+      }
     />
   )
 }
