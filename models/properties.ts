@@ -8,8 +8,28 @@ const apiUrl =
     ? process.env.EXPO_PUBLIC_API_ENDPOINT!
     : process.env.EXPO_PUBLIC_API_URL!
 
+const queryAtom = atom<string | undefined>(undefined)
+
+export const queryRefreshAtom = atom(
+  (get) => get(queryAtom),
+  (get, set, query?: string) => {
+    set(queryAtom, query)
+    set(listAtom)
+  }
+)
+
 export const listAtom = atomWithRefresh(async (get) =>
-  fetch(apiUrl + '/Properties')
+  Promise.resolve(new URL(apiUrl + '/Properties'))
+    .then((url) => {
+      const query = get(queryAtom)
+
+      if (!!query && query.length > 0) {
+        url.searchParams.set('query', query)
+      }
+
+      return url
+    })
+    .then((url) => fetch(url))
     .then((res) => {
       info(`[API] Properties LIST (${res.status})`)
 
