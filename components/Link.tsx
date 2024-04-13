@@ -1,11 +1,7 @@
 import { useRouter } from 'expo-router'
 import { Paragraph } from 'tamagui'
 
-export default function Link({
-  href,
-  children,
-  ...props
-}: any) {
+export default function Link({ href, children, ...props }: any) {
   const router = useRouter()
 
   return (
