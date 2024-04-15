@@ -1,13 +1,13 @@
 import { Search as SearchIcon } from '@tamagui/lucide-icons'
 import { Button, Input, Paragraph, XStack, YStack } from 'tamagui'
-import { queryRefreshAtom } from '#/properties'
+import { searchAtom } from '#/properties'
 import { useAtom } from 'jotai'
 import React from 'react'
 import type { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native'
 import { XCircle } from '@tamagui/lucide-icons'
 
 export default function Search() {
-  const [query, setQuery] = useAtom(queryRefreshAtom)
+  const [query, setQuery] = useAtom(searchAtom)
   const [value, setValue] = React.useState<string>(query ?? '')
 
   function search() {
@@ -16,7 +16,7 @@ export default function Search() {
 
   function reset() {
     setValue('')
-    setQuery(undefined)
+    setQuery()
   }
 
   function handleEnterKey(e: NativeSyntheticEvent<TextInputKeyPressEventData>) {

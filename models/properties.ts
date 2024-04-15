@@ -1,6 +1,6 @@
 import { info } from '$/logging'
 import { atom } from 'jotai'
-import { RESET, atomWithRefresh, atomWithReset } from 'jotai/utils'
+import { RESET, atomWithReset } from 'jotai/utils'
 import { Platform } from 'react-native'
 
 const apiUrl =
@@ -8,37 +8,68 @@ const apiUrl =
     ? process.env.EXPO_PUBLIC_API_ENDPOINT!
     : process.env.EXPO_PUBLIC_API_URL!
 
-const queryAtom = atom<string | undefined>(undefined)
-
-export const queryRefreshAtom = atom(
-  (get) => get(queryAtom),
-  (get, set, query?: string) => {
-    set(queryAtom, query)
-    set(listAtom)
-  }
-)
-
-export const listAtom = atomWithRefresh(async (get) =>
+/**
+ * Load the properties from the LIST API
+ */
+const loadProperties = (query: string | null = null, offset = 0): Promise<Property[]> =>
   Promise.resolve(new URL(apiUrl + '/Properties'))
+    // Set query parameter if needed
     .then((url) => {
-      const query = get(queryAtom)
-
-      if (!!query && query.length > 0) {
+      if (query != null && query.length > 0) {
         url.searchParams.set('query', query)
       }
 
       return url
     })
+    // Set the offset if it's larger than 0
+    .then((url) => {
+      if (offset != 0) {
+        url.searchParams.set('offset', offset.toString())
+      }
+
+      return url
+    })
+    // Load the data from the API
     .then((url) => fetch(url))
+    // Logging the request
     .then((res) => {
       info(`[API] Properties LIST (${res.status})`)
 
       return res
     })
+    // Transform into JSON
     .then((res) => res.json())
-    .catch(() => ({
-      properties: [],
-    }))
+    .catch(() => ({ properties: [] }))
+    // Extract the data we need
+    .then((json) => json.properties)
+
+const queryAtom = atom<string | undefined>(undefined)
+
+export const searchAtom = atom(
+  (get) => get(queryAtom),
+  (get, set, term?: string) => {
+    set(queryAtom, term)
+    set(listAtom, true)
+  }
+)
+export const offsetAtom = atom<number>(0) // With reset for pull to refresh?
+
+const propertiesAtom = atom<Property[]>([])
+
+export const listAtom = atom(
+  (get) => get(propertiesAtom),
+  async (get, set, reset?: boolean) => {
+    const offset = reset ? 0 : get(offsetAtom)
+    info('listAtom:SET with offset ' + offset)
+    const data = await loadProperties(get(queryAtom), offset)
+    set(offsetAtom, offset + 1)
+
+    if (offset === 0) {
+      set(propertiesAtom, data)
+    } else {
+      set(propertiesAtom, (prev) => [...prev, ...data])
+    }
+  }
 )
 
 const detailsAtom = atomWithReset<PropertyDetails | Error | null>(null)
