@@ -52,7 +52,7 @@ function RootLayoutNav() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <GestureProvider>
             <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ headerShown: false, headerTitle: 'Properties' }} />
               <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
               <Stack.Screen
                 name="error"
