@@ -2,12 +2,14 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { SplashScreen, Stack } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { TamaguiProvider } from 'tamagui'
+import { Provider as JotaiProvider } from 'jotai'
 
 import '../tamagui-web.css'
 
 import { config } from '../tamagui.config'
 import { useFonts } from 'expo-font'
 import { useEffect } from 'react'
+import GestureProvider from '@/Gesture'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -15,8 +17,7 @@ export {
 } from 'expo-router'
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: 'index',
 }
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -46,13 +47,24 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme()
 
   return (
-    <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-      </ThemeProvider>
-    </TamaguiProvider>
+    <JotaiProvider>
+      <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <GestureProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false, headerTitle: 'Properties' }} />
+              <Stack.Screen name="[property]" options={{ headerTitle: 'Details' }} />
+              <Stack.Screen
+                name="error"
+                options={{
+                  headerShown: false,
+                  presentation: 'modal',
+                }}
+              />
+            </Stack>
+          </GestureProvider>
+        </ThemeProvider>
+      </TamaguiProvider>
+    </JotaiProvider>
   )
 }
